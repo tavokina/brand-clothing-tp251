@@ -1,0 +1,1 @@
+// There would be a language provider component that would provide the current language to the rest of the application. This component would use React's context API to pass down the current language and a function to change the language to all child components.
