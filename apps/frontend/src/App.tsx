@@ -1,4 +1,4 @@
-import {HomePage} from './pages/HomePage';
+import {HomePage} from './pages/HomePage/HomePage';
 import { Provider } from 'react-redux';
 import { store } from './app/store/store';
 import './app/styles/styles.scss';
