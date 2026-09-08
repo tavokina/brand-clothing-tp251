@@ -16,7 +16,7 @@ class Product(models.Model):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(check=models.Q(discount_percent__lte=100), name="product_discount_lte_100")
+            models.CheckConstraint(condition=models.Q(discount_percent__lte=100), name="product_discount_lte_100")
         ]
 
 
