@@ -1,14 +1,19 @@
 from rest_framework import generics, status
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.serializers import (RegisterSerializer,
-                               UserProfileSerializer)
+                               UserProfileSerializer,
+                               PasswordResetConfirmSerializer,
+                               PasswordResetRequestSerializer)
 from users.tokens import account_activation_token
 from users.utils import send_activation_email
 
@@ -64,3 +69,50 @@ class MeView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        refresh_token = request.data.get("refresh")
+        if not refresh_token:
+            return Response({"detail": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        except TokenError:
+            return Response({"detail": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_205_RESET_CONTENT)
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
+
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(
+            data=request.data,
+            context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(request=request)
+        return Response(
+            {"detail": "If the account exists, email was sent."},
+            status=status.HTTP_200_OK,
+        )
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, uidb64, token):
+        data = {
+            "uid": uidb64,
+            "token": token,
+            "new_password": request.data.get("new_password"),
+        }
+        serializer = PasswordResetConfirmSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"detail": "Password changed successfully."}, status=status.HTTP_200_OK)
