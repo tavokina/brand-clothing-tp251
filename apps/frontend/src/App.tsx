@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './app/store/store';
 import './app/styles/styles.scss';
-import './App.css';
+
 import { HomePage } from './pages/HomePage';
 import { AdminLayout } from './components/Layout/AdminLayout';
 import { AdminProductFormPage } from './pages/AdminProductFormPage';
