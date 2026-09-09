@@ -2,12 +2,13 @@ from rest_framework import generics, status
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from users.serializers import RegisterSerializer
+from users.serializers import (RegisterSerializer,
+                               UserProfileSerializer)
 from users.tokens import account_activation_token
 from users.utils import send_activation_email
 
@@ -55,3 +56,11 @@ class ResendActivationView(APIView):
             return Response({"detail": "If the account exists, email was sent."})
         send_activation_email(request, user)
         return Response({"detail": "If the account exists, email was sent."})
+
+
+class MeView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
