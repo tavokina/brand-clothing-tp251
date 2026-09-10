@@ -19,7 +19,7 @@ def _get_discounted_price_usd(obj):
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ("id", "image", "order")
+        fields = ("id", "image", "order", "color")
 
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
