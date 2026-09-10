@@ -1,0 +1,50 @@
+{
+  "header": {
+   
+  },
+  "footer" : {
+
+  },
+  "home": {
+    "hero_title": "Test",
+    "cta_catalog": "To catalog"
+  },
+  "catalog": {
+    "search_placeholder": "Search",
+    "sort_price_asc": "Price: low to high"
+  },
+  "product": {
+
+  },
+  "chekout": {
+
+  },
+  "order_comfirmation": {
+
+  },
+  "cart": {
+    "empty": "Cart is empty",
+    "checkout_button": "Checkout"
+  },
+  "about": {
+
+  },
+  "account": {
+
+  },
+  "password": {
+
+  },
+  "sing_in": {
+
+  },
+  "sing_up": {
+
+  },
+  "admin": {
+
+  },
+  "not_found": {
+
+  }
+}

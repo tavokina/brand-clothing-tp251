@@ -1,0 +1,50 @@
+{
+  "header": {
+   
+  },
+  "footer" : {
+
+  },
+  "home": {
+    "hero_title": "Тест",
+    "cta_catalog": "До каталогу"
+  },
+  "catalog": {
+    "search_placeholder": "Пошук товару",
+    "sort_price_asc": "Ціна: за зростанням"
+  },
+  "product": {
+
+  },
+  "chekout": {
+
+  },
+  "order_comfirmation": {
+
+  },
+  "cart": {
+    "empty": "Кошик порожній",
+    "checkout_button": "Оформити замовлення"
+  },
+  "about": {
+
+  },
+  "account": {
+
+  },
+  "password": {
+
+  },
+  "sing_in": {
+
+  },
+  "sing_up": {
+
+  },
+  "admin": {
+
+  },
+  "not_found": {
+
+  }
+}
