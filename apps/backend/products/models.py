@@ -43,7 +43,8 @@ class ProductColor(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to="products/")
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name="images", null=True, blank=True) # for future frontend functionally. Clicking on Color in Detail view will change the picture with the same color. If color=None need fallback logic for frontend
+    image = models.ImageField(upload_to="products/") #will develop later using S3 AWS bucket
     order = models.PositiveSmallIntegerField(default=0) #for frontend. Order = 0 decides which photo is main one
 
 
