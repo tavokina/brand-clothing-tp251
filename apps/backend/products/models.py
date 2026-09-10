@@ -24,7 +24,9 @@ class Product(models.Model):
     price_uah = models.DecimalField(max_digits=10, decimal_places=2)
     price_usd = models.DecimalField(max_digits=10, decimal_places=2)
     is_bestseller = models.BooleanField(default=False)
+    is_new_collection = models.BooleanField(default=False) #For frontend. New collection flag for frontend logic
     is_available = models.BooleanField(default=False) #For frontend. Button notify of availability
+    created_at = models.DateTimeField(auto_now_add=True) # for publication time sorting
 
     class Meta:
         constraints = [
@@ -34,6 +36,12 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.type} - {self.name}"
 
+class SizeGuide(models.Model):
+    product_type = models.OneToOneField(
+        ProductType, on_delete=models.CASCADE, related_name="size_guide"
+    )
+    image = models.ImageField(upload_to="size_guides/", blank=True, null=True)
+    description = models.TextField(blank=True) #Text description for size guide if needed
 
 class ProductColor(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
