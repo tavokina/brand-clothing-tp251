@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from decimal import Decimal, ROUND_HALF_UP
-from products.models import Product, ProductImage, Color, ProductColor, ProductType
+from products.models import Product, ProductImage, Color, ProductColor, SizeGuide
 
 
 def _calc_discounted(price, discount_percent):
@@ -15,6 +15,11 @@ def _get_discounted_price_usd(obj):
     return _calc_discounted(obj.price_usd, obj.discount_percent)
 
 
+class SizeGuideSerializer(serializers.ModelSerializer):
+    product_type = serializers.SlugRelatedField(many=False, slug_field="name", read_only=True)
+    class Meta:
+        model = SizeGuide
+        fields = ("id", "product_type", "image", "description")
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,6 +52,8 @@ class ProductListSerializer(serializers.ModelSerializer):
                   "is_available",
                   "discounted_price_uah",
                   "discounted_price_usd",
+                  "is_bestseller",
+                  "is_new_collection",
                   )
 
     def get_main_image(self, obj):
@@ -66,6 +73,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     available_colors = ProductColorSerializer(source="colors", many=True)
     type = serializers.SlugRelatedField(many=False, slug_field="name", read_only=True)
+    size_guide = serializers.SerializerMethodField()
     discounted_price_uah = serializers.SerializerMethodField()
     discounted_price_usd = serializers.SerializerMethodField()
     class Meta:
@@ -81,7 +89,15 @@ class ProductDetailSerializer(serializers.ModelSerializer):
                   "is_bestseller",
                   "images",
                   "available_colors",
-                  "is_available")
+                  "is_available",
+                  "size_guide")
+
+
+    def get_size_guide(self, obj):
+        size_guide = getattr(obj.type, "size_guide", None)
+        if size_guide:
+            return SizeGuideSerializer(size_guide, context=self.context).data
+        return None
 
     def get_discounted_price_uah(self, obj):
         return _get_discounted_price_uah(obj)
