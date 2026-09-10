@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from products.models import ProductType, Product, ProductColor, ProductImage, Color
+
+
+admin.site.register(Color)
+admin.site.register(ProductType)
+admin.site.register(Product)
+admin.site.register(ProductColor)
+admin.site.register(ProductImage)
