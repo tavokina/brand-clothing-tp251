@@ -48,17 +48,8 @@ class Order(models.Model):
     #     related_name="orders",
     # )
 
-    # address = models.ForeignKey(
-    #     Address,
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    #     related_name="orders",
-    # )
-
-    guest_address = models.TextField(
-        null=True,
-        blank=True,
+    delivery_address = models.TextField(
+        help_text="Final delivery address at the time of order placement.",
     )
 
     email = models.EmailField()
@@ -138,11 +129,13 @@ class Order(models.Model):
         constraints = [
             models.CheckConstraint(
                 condition=(
-                    models.Q(user__isnull=False, guest_address__isnull=True)
-                    | models.Q(user__isnull=True, guest_address__isnull=False)
+                    models.Q(delivery_address__isnull=False) & ~models.Q(delivery_address="") &
+                    models.Q(email__isnull=False) & ~models.Q(email="") &
+                    models.Q(user_name__isnull=False) & ~models.Q(user_name="") &
+                    models.Q(user_phone__isnull=False) & ~models.Q(user_phone="")
                 ),
-                name="order_customer_address_consistency",
-            ),
+                name="order_fields_must_be_filled",
+            )
         ]
 
     def __str__(self):

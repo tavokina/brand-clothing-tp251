@@ -50,7 +50,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "user_name",
             "user_phone",
             "email",
-            "guest_address",
+            "delivery_address",
             "created_at",
             "status",
             "currency",
