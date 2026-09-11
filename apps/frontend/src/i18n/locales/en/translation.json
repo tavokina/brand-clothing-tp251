@@ -1,50 +1,83 @@
 {
+  "bestsellers": "Bestsellers",
+  "collections": "Collections",
+  "password": "Password",
+  "email": "Email",
+  "continue_btn": "Continue shopping",
+  "checkout_btn": "Checkout",
+  "shipping": "Shipping",
+  "payment": "Payment",
   "header": {
-   
+    "catalog" : "Catalog",
+    "about": "About"
   },
   "footer" : {
-
+    "info": "Information",
+    "contacts": "Contacts"
   },
   "home": {
-    "hero_title": "Test",
+    "hero_title": "The Art is the clothes. You are The Artist.",
     "cta_catalog": "To catalog"
   },
   "catalog": {
+    "title": "Products catalog",
     "search_placeholder": "Search",
-    "sort_price_asc": "Price: low to high"
+    "empty_search": "No results found for ",
+    "price": "Price",
+    "category": "Category",
+    "sort": "Sort",
+    "sort_price_asc": "Price: low to high",
+    "sort_price_desc": "Price: high to low",
+    "sort_newest": "Most recent"
   },
   "product": {
-
-  },
-  "chekout": {
-
+    "cart_btn": "Add to cart",
+    "size": "Size chart",
+    "returns_policy": "Exchange and returns",
+    "slider_title": "You may also like"
   },
   "order_comfirmation": {
 
   },
   "cart": {
-    "empty": "Cart is empty",
-    "checkout_button": "Checkout"
+    "title": "Cart",
+    "quantity": "Quantity",
+    "total": "Total:",
+    "empty": "Cart is empty"
+  },
+  "checkout": {
+    "contacts": "Contact information",
+    "comment": "Order comment"
   },
   "about": {
 
   },
   "account": {
-
-  },
-  "password": {
-
+    "info": "Personal information",
+    "favorites": "Favorites",
+    "orders": "Orders",
+    "order_status_1": "Processing",
+    "order_status_2": "Awaiting shipment",
+    "order_status_3": "Shipped",
+    "order_status_4": "Delivered"
   },
   "sing_in": {
-
+    "title": "Log in",
+    "sign_in_btn": "Sign in",
+    "create": "Create account",
+    "password_reset": "Forgot password?"
+    
   },
   "sing_up": {
-
+    "first_name": "First name",
+    "last_name": "Last name",
+    "confirm_password": "Confirm password",
+    "sign_up_btn": "Sign up"
   },
   "admin": {
 
   },
   "not_found": {
-
+    "text": "Page is not found"
   }
 }

@@ -1,50 +1,83 @@
 {
+  "bestsellers": "Бестселери",
+  "collections": "Колекції",
+  "password": "Пароль",
+  "email": "Електронна пошта",
+  "continue_btn": "Продовжити покупки",
+  "checkout_btn": "Оформити замовлення",
+  "payment": "Оплата",
+  "shipping": "Доставка",
   "header": {
-   
+    "catalog" : "Каталог",
+    "about": "Про нас"
   },
   "footer" : {
-
+    "info": "Інформація",
+    "contacts": "Контакти"
   },
   "home": {
-    "hero_title": "Тест",
+    "hero_title": "The Art is the clothes. You are The Artist.",
     "cta_catalog": "До каталогу"
   },
   "catalog": {
-    "search_placeholder": "Пошук товару",
-    "sort_price_asc": "Ціна: за зростанням"
+    "title": "Каталог товарів",
+    "search_placeholder": "Пошук",
+    "empty_search": "Не знайдено результатів для запиту ",
+    "price": "Ціна",
+    "category": "Тип товару",
+    "sort": "Сортувати",
+    "sort_price_asc": "За ціною: від нижчої до вишчої",
+    "sort_price_desc": "За ціною: від вишчої до нижчої",
+    "sort_newest": "Найновіші"
   },
   "product": {
-
-  },
-  "chekout": {
-
+    "cart_btn": "Додати до кошика",
+    "size": "Таблиця розмірів",
+    "returns_policy": "Обмін та повернення",
+    "slider_title": "Вам також може сподобатися"
   },
   "order_comfirmation": {
 
   },
   "cart": {
-    "empty": "Кошик порожній",
-    "checkout_button": "Оформити замовлення"
+    "title": "Кошик",
+    "quantity": "Кількість",
+    "total": "Всього:",
+    "empty": "Кошик порожній"
+  },
+  "checkout": {
+    "contacts": "Контактна інформація",
+    "comment": "Коментар до замовлення"
   },
   "about": {
 
   },
   "account": {
-
-  },
-  "password": {
-
+    "info": "Особиста інформація",
+    "favorites": "Обране",
+    "orders": "Замовлення",
+    "order_status_1": "В обробці",
+    "order_status_2": "Очікує відправлення",
+    "order_status_3": "Відправлено",
+    "order_status_4": "Доставлено"
   },
   "sing_in": {
-
+    "title": "Увійти в обліковий запис",
+    "sign_in_btn": "Увійти",
+    "create": "Створити обліковий запис",
+    "password_reset": "Забули пароль?"
+    
   },
   "sing_up": {
-
+    "first_name": "Ім'я",
+    "last_name": "Прізвище",
+    "confirm_password": "Підтвердіть пароль",
+    "sign_up_btn": "Зареєструватись"
   },
   "admin": {
 
   },
   "not_found": {
-
+    "text": "Сторінка не знайдена"
   }
 }
