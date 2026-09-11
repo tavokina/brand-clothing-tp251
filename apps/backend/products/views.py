@@ -8,6 +8,15 @@ from products.models import Product
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Basic ViewSet with ReadOnlyMode
+
+    Has name search field and ordering via price (uah and usd),
+    created_at (auto incremented time stamp in Product model. Depends on when was the product add to the db)
+    is_bestseller (bool) and is_new_collection (bool).
+    Basic ordering depends on when was the product add to the db (so the new products are shown first)
+
+    """
     queryset = Product.objects.all()
     filter_backends =  [filters.SearchFilter, filters.OrderingFilter]
 
