@@ -7,7 +7,7 @@ from products.models import Product
 
 
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.all()
     filter_backends =  [filters.SearchFilter, filters.OrderingFilter]
 
