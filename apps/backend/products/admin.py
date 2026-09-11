@@ -22,6 +22,6 @@ admin.site.register(SizeGuide)
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = ("name_ua", "name_eng")
     inlines = [SizeGuideInline]
 
