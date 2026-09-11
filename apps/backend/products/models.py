@@ -1,6 +1,17 @@
 from django.db import models
 
 
+class Fabric(models.Model):
+    """
+    DEPRECATED: Temporary placeholder for backward compatibility with orders/models.py,
+    pending other dev update to OrderItem.fabric. Remove after the orders fix.
+    """
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Color(models.Model):
     name = models.CharField(max_length=100)
     hex_code = models.CharField(max_length=7, blank=True) # for example "#FF0000" for frontend
@@ -10,16 +21,19 @@ class Color(models.Model):
         return self.name
 
 class ProductType(models.Model):
-    name = models.CharField(max_length=100)
+    name_ua = models.CharField(max_length=100)
+    name_eng = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return self.name_ua
 
 class Product(models.Model):
-    name = models.TextField()
+    name = models.CharField(max_length=255)
     type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name="products")
-    description = models.TextField(blank=True)
-    fabric_composition = models.CharField(max_length=255, blank=True) # "100% cotton"
+    description_ua = models.TextField(blank=True)
+    description_eng = models.TextField(blank=True)
+    fabric_composition_ua = models.CharField(max_length=255, blank=True) # "100% бавовна"
+    fabric_composition_eng = models.CharField(max_length=255, blank=True) # "100% cotton"
     discount_percent = models.PositiveSmallIntegerField(default=0)
     price_uah = models.DecimalField(max_digits=10, decimal_places=2)
     price_usd = models.DecimalField(max_digits=10, decimal_places=2)
@@ -41,7 +55,8 @@ class SizeGuide(models.Model):
         ProductType, on_delete=models.CASCADE, related_name="size_guide"
     )
     image = models.ImageField(upload_to="size_guides/", blank=True, null=True)
-    description = models.TextField(blank=True) #Text description for size guide if needed
+    description_ua = models.TextField(blank=True) #Text description for size guide if needed
+    description_eng = models.TextField(blank=True)
 
 class ProductColor(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
@@ -53,7 +68,7 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name="images", null=True, blank=True) # for future frontend functionally. Clicking on Color in Detail view will change the picture with the same color. If color=None need fallback logic for frontend
     image = models.ImageField(upload_to="products/") #will develop later using S3 AWS bucket
-    order = models.PositiveSmallIntegerField(default=0) #for frontend. Order = 0 decides which photo is main one
+    order = models.PositiveSmallIntegerField(default=0) #for frontend. order = 0 decides which photo is main one
 
 
     class Meta:
