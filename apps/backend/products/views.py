@@ -1,8 +1,8 @@
 from rest_framework import (viewsets,
                             filters)
 from products.serializers import (ProductListSerializer,
-                                  ProductDetailSerializer)
-from products.models import Product
+                                  ProductDetailSerializer, CollectionSerializer, CollectionDetailSerializer)
+from products.models import Product, Collection
 
 
 
@@ -21,7 +21,6 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends =  [filters.SearchFilter, filters.OrderingFilter]
 
     search_fields = ["name"]
-
     ordering_fields = [
         "price_uah",
         "price_usd",
@@ -35,3 +34,26 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == "list":
             return ProductListSerializer
         return ProductDetailSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        collection_slug = self.request.query_params.get("collection")
+        if collection_slug:
+            queryset = queryset.filter(collection__slug=collection_slug)
+        return queryset
+
+
+
+class CollectionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Collection.objects.all()
+    lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return CollectionDetailSerializer
+        return CollectionSerializer
+
+    def get_queryset(self):
+        if self.action == "retrieve":
+            return Collection.objects.prefetch_related("products__images")
+        return Collection.objects.all()
