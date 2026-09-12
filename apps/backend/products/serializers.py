@@ -30,7 +30,8 @@ from products.models import (Product,
                              ProductImage,
                              Color,
                              ProductColor,
-                             SizeGuide)
+                             SizeGuide,
+                             Collection)
 
 
 class LanguageMixin:
@@ -99,6 +100,28 @@ def _get_discounted_price(obj, currency):
     price = obj.price_usd if currency == "usd" else obj.price_uah
     return _calc_discounted(price, obj.discount_percent)
 
+class CollectionSerializer(LanguageMixin, serializers.ModelSerializer):
+    description = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Collection
+        fields = ("id", "slug", "name", "description")
+
+
+    def get_description(self, obj):
+        """Returns description_eng or description_ua depending on self._lang()."""
+        return obj.description_eng if self._lang() == "eng" else obj.description_ua
+
+class CollectionDetailSerializer(CollectionSerializer):
+    """Full variant — with ProductList, for a page with a specific page."""
+    products = serializers.SerializerMethodField()
+
+    class Meta(CollectionSerializer.Meta):
+        fields = CollectionSerializer.Meta.fields + ("products",)
+
+    def get_products(self, obj):
+        products = obj.products.all()
+        return ProductListSerializer(products, many=True, context=self.context).data
 
 
 class SizeGuideSerializer(LanguageMixin, serializers.ModelSerializer):
@@ -115,7 +138,7 @@ class SizeGuideSerializer(LanguageMixin, serializers.ModelSerializer):
 
     class Meta:
         model = SizeGuide
-        fields = ("id", "image", "description")
+        fields = ("image", "description")
 
     def get_description(self, obj):
         """Returns description_eng or description_ua depending on self._lang()."""
@@ -132,9 +155,16 @@ class ProductImageSerializer(serializers.ModelSerializer):
     color is the id of the related color and can be null if the image
     isn't tied to a specific color (a generic product photo).
     """
+    color = serializers.SerializerMethodField()
     class Meta:
         model = ProductImage
         fields = ("id", "image", "order", "color")
+
+    def get_color(self, obj):
+        if obj.color:
+            return ColorSerializer(obj.color, context=self.context).data
+        return None
+
 
 class ColorSerializer(serializers.ModelSerializer):
     """Serializes the Color reference model. Color names are always in English."""
@@ -167,11 +197,13 @@ class ProductListSerializer(LanguageMixin, CurrencyMixin, serializers.ModelSeria
     main_image = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
     discounted_price = serializers.SerializerMethodField()
+    collection = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = ("id",
                   "name",
+                  "collection",
                   "main_image",
                   "price",
                   "discounted_price",
@@ -179,6 +211,11 @@ class ProductListSerializer(LanguageMixin, CurrencyMixin, serializers.ModelSeria
                   "is_bestseller",
                   "is_new_collection",
                   )
+
+    def get_collection(self, obj):
+        if obj.collection:
+            return CollectionSerializer(obj.collection, context=self.context).data
+        return None
 
     def get_price(self, obj):
         """Returns the original (non-discounted) price as a string, in the currency from self._currency()."""
@@ -218,12 +255,18 @@ class ProductDetailSerializer(LanguageMixin, CurrencyMixin, serializers.ModelSer
     size_guide = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
     discounted_price = serializers.SerializerMethodField()
+    collection = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ("id", "name", "type", "description", "fabric_composition",
+        fields = ("id", "name", "type", "collection", "description", "fabric_composition",
                   "price", "discounted_price",
                   "is_bestseller", "images", "available_colors", "is_available", "size_guide")
+
+    def get_collection(self, obj):
+        if obj.collection:
+            return CollectionSerializer(obj.collection, context=self.context).data
+        return None
 
     def get_price(self, obj):
         """Returns the original (non-discounted) price as a string, in the currency from self._currency()."""
@@ -245,16 +288,9 @@ class ProductDetailSerializer(LanguageMixin, CurrencyMixin, serializers.ModelSer
 
     def get_size_guide(self, obj):
         """
-        Returns the size guide for the product's type, or None if no
-        SizeGuide has been created yet for that ProductType.
-        (SizeGuide is linked to ProductType via a OneToOneField, so we use
-        getattr with a default instead of direct access, to avoid
-        RelatedObjectDoesNotExist.)
+        Returns the size guide which is a singleton in the whole project
         """
-        size_guide = getattr(obj.type, "size_guide", None)
-        if size_guide:
-            return SizeGuideSerializer(size_guide, context=self.context).data
-        return None
+        return SizeGuideSerializer(SizeGuide.load(), context=self.context).data
 
     def get_discounted_price(self, obj):
         """Returns the discounted price as a string, or None if there is no discount."""

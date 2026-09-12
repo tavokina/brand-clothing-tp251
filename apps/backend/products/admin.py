@@ -5,23 +5,54 @@ from products.models import (ProductType,
                              ProductColor,
                              ProductImage,
                              Color,
-                             SizeGuide)
+                             SizeGuide,
+                             Collection)
 
 
-class SizeGuideInline(admin.StackedInline):
-    model = SizeGuide
-    extra = 0
-    max_num = 1
+@admin.register(Color)
+class ColorAdmin(admin.ModelAdmin):
+    list_display = ("name", "hex_code")
+    search_fields = ("name",)
 
 
-admin.site.register(Color)
-admin.site.register(Product)
-admin.site.register(ProductColor)
+@admin.register(ProductColor)
+class ProductColorAdmin(admin.ModelAdmin):
+    list_display = ("product", "color", "is_available")
+    list_filter = ("is_available", "color")
+    search_fields = ("product__name", "color__name")
+
+
 admin.site.register(ProductImage)
-admin.site.register(SizeGuide)
+admin.site.register(ProductType)
 
-@admin.register(ProductType)
-class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ("name_ua", "name_eng")
-    inlines = [SizeGuideInline]
 
+class ProductColorInline(admin.TabularInline):
+    model = ProductColor
+    extra = 1
+    autocomplete_fields = ["color"]
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ("name", "type", "price_uah", "is_available", "is_bestseller")
+    inlines = [ProductColorInline, ProductImageInline]
+
+
+@admin.register(Collection)
+class CollectionAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+    list_display = ("name", "slug", "created_at")
+
+
+@admin.register(SizeGuide)
+class SizeGuideAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return not SizeGuide.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

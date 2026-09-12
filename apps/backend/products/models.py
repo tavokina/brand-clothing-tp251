@@ -16,6 +16,21 @@ class Fabric(models.Model):
     def __str__(self):
         return self.name
 
+class Collection(models.Model):
+    """
+    A named collection used to group products for collection landing pages
+    (e.g. "Summer 2026", "New Year Capsule"). Each product belongs to
+    at most one collection.
+    """
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True) #slugfield for clear URL e.g /collection/summer-2026/
+    description_ua = models.TextField(blank=True)
+    description_eng = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 
 class Color(models.Model):
     """
@@ -60,6 +75,8 @@ class Product(models.Model):
     """
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProductType, on_delete=models.PROTECT, related_name="products")
+    collection = models.ForeignKey(
+        Collection, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
     description_ua = models.TextField(blank=True)
     description_eng = models.TextField(blank=True)
     fabric_composition_ua = models.CharField(max_length=255, blank=True)  # "100% бавовна"
@@ -83,18 +100,31 @@ class Product(models.Model):
 
 class SizeGuide(models.Model):
     """
-    Size chart attached to a ProductType (one size guide per type,
-    shared by all products of that type — not per individual product).
-
-    image holds an optional visual size chart; description_ua/_eng hold
-    optional accompanying text (e.g. measuring instructions).
+    Single, site-wide size guide (only one row is ever allowed).
+    Not tied to a specific ProductType — the same size chart is shown everywhere.
     """
-    product_type = models.OneToOneField(
-        ProductType, on_delete=models.CASCADE, related_name="size_guide"
-    )
     image = models.ImageField(upload_to="size_guides/", blank=True, null=True)
-    description_ua = models.TextField(blank=True)  # Text description for size guide if needed
+    description_ua = models.TextField(blank=True)
     description_eng = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Size guide"
+        verbose_name_plural = "Size guide"  # singular even in plural, since there's only one
+
+    def save(self, *args, **kwargs):
+        self.pk = 1  # forces every save to overwrite the same single row
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # prevent accidental deletion of the only instance
+
+    @classmethod
+    def load(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "Size guide"
 
 
 class ProductColor(models.Model):
@@ -109,6 +139,9 @@ class ProductColor(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="colors")
     color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name="products")
     is_available = models.BooleanField(default=True)  # is this color available for this product right now
+
+    def __str__(self):
+        return f"{self.product.name} - {self.color.name}"
 
 
 class ProductImage(models.Model):
